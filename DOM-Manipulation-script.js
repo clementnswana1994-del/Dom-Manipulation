@@ -3,27 +3,21 @@
 // Menu data structure
 const menuLinks = [
   { text: "about", href: "/about" },
-  {
-    text: "catalog",
-    href: "#",
+  { text: "catalog",href: "#",
     subLinks: [
       { text: "all", href: "/catalog/all" },
       { text: "top selling", href: "/catalog/top" },
       { text: "search", href: "/catalog/search" },
     ],
   },
-  {
-    text: "orders",
-    href: "#",
+  {text: "orders",href: "#",
     subLinks: [
       { text: "new", href: "/orders/new" },
       { text: "pending", href: "/orders/pending" },
       { text: "history", href: "/orders/history" },
     ],
   },
-  {
-    text: "account",
-    href: "#",
+  { text: "account",href: "#",
     subLinks: [
       { text: "profile", href: "/account/profile" },
       { text: "sign out", href: "/account/signout" },
@@ -82,10 +76,11 @@ subMenuEl.style.height = "100%";
 subMenuEl.style.backgroundColor = "var(--sub-menu-bg)";
 subMenuEl.classList.add("flex-around");
 
+
 subMenuEl.style.position = "absolute";
 subMenuEl.style.top = "0";
 
-// Part 4
+// Part 4 Adding Meun Interaction
 
 const topMenuLinks = topMenuEl.querySelectorAll("a");
 function handleClick(event) {
@@ -119,29 +114,73 @@ function handleClick(event) {
 }
 topMenuEl.addEventListener("click", handleClick);
 
-// Part 5
+// Part 5 Adding Submeun Interaction
 
-menuEl.addEventListener('click', function(event) {
-  // Check if the clicked element is an <a> tag
-  if (event.target.tagName === 'A') {
-    // Cache the clicked <a> element
-    const clickedLink = event.target;
+topMenuLinks.forEach(linkElement => {
+   linkElement.addEventListener('click', (event) => {
+     event.preventDefault(); // Prevent the default link behavior
 
-    // Check if the link does not have the 'active' class
-    if (!clickedLink.classList.contains('active')) {
-      // Find the corresponding link object from the menuLinks array
-      // based on the link's text content.
-      // This step assumes the <a> text matches a link's text property.
-      const linkObject = menuLinks.find(link => link.text === clickedLink.textContent);
+     // Check if the clicked link is not already active
+     if (!linkElement.classList.contains('active')) {
       
-      // If the link object exists and has a 'subLinks' property
-      if (linkObject && linkObject.hasOwnProperty('subLinks')) {
-        // Set the CSS top property of subMenuEl to 100%
-        subMenuEl.style.top = '100%';
-      } else {
-        // Otherwise, set the CSS top property of subMenuEl to 0
-        subMenuEl.style.top = '0';
-      }
-    }
+       // Find the corresponding menu item object
+       const linkText = linkElement.textContent;
+       const cachedLinkObject = menuLinks.find(link => link.text === linkText);
+      
+       // Check for the subLinks property
+       if (cachedLinkObject && cachedLinkObject.subLinks) {
+         // Show the submenu
+         //link.textContent = subLinks["text"];
+         subMenuEl.style.top = '100%';
+       } else {
+         // Hide the submenu
+         subMenuEl.style.top = '0';
+       }
+
+       topMenuLinks.forEach(el => el.classList.remove('active'));
+       linkElement.classList.add('active');
+     }
+   });
+ });
+ 
+ function subMenu(subLinks) {
+   // Clear the current contents of subMenuEl
+   subMenuEl.innerHTML = '';
+
+   // Iterate over the subLinks array
+   subLinks.forEach(link => {
+     // Create an <a> element
+     const anchor = document.createElement('a');
+
+     // Add an href attribute
+     anchor.setAttribute('href', link.href);
+
+     // Set the element's content
+     anchor.textContent = link.text;
+
+     // Append the new element to the subMenuEl
+     subMenuEl.appendChild(anchor);
+   });
+ }
+ 
+ subMenuEl.addEventListener('click', function(evt) {
+  evt.preventDefault();
+  if (evt.target.tagName !== 'A') {
+    return;
+  }
+
+  console.log(evt.target.textContent);
+  subMenuEl.style.top = '0';
+  topMenuLinks.forEach(function(link) {
+    link.classList.remove('active');
+  });
+
+  const clickedContent = evt.target.textContent;
+  if (clickedContent === 'ABOUT') {
+    mainEl.innerHTML = '<h1>About</h1>';
+  } else {
+    mainEl.innerHTML = `<h1>${clickedContent}</h1>`;
   }
 });
+
+ 
